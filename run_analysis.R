@@ -38,27 +38,31 @@ xtrainmean <- select(xtrain, contains("mean()"))
 xtrainstd <- select(xtrain, contains("std()"))
 xtest <- cbind(xtestmean,xteststd)
 xtrain <- cbind(xtrainmean, xtrainstd)
-names(xtest)
-names(xtrain)
 
 
-# 5. Merge y_test and y_train with the activity labels
-test_activities = merge(ytest,activities,by.x="V1", by.y="V1")
-train_activities = merge(ytrain,activities,by.x="V1", by.y="V1")
-
-# 6. Add the merged table of activities and subjects to our test and train sets
-xtest <- cbind(test_activities$V2, xtest)
+# 5. Add the activity codes (from y test and train) and subjects to our X test and train sets
+xtest <- cbind(ytest$V1, xtest)
 xtest <- cbind(subject_test$V1, xtest)
-xtrain <- cbind(train_activities$V2, xtrain)
+xtrain <- cbind(ytrain$V1, xtrain)
 xtrain <- cbind(subject_train$V1, xtrain)
 
-# 7. Rename activity and subject columns
-setnames(xtest,"test_activities$V2","activity")
+
+# 6. Merge the activity labels to x_test and x_train on the activity codes
+xtest <- merge(activities,xtest,by.x="V1", by.y="ytest$V1")
+xtrain <- merge(activities,xtrain,by.x="V1", by.y="ytrain$V1")
+xtest <- tbl_df(xtest)
+xtrain <- tbl_df(xtrain)
+
+
+# 7. Drop the old activity codes and rename the activity and subject columns
+setnames(xtest,"V1","activitycode")
+setnames(xtrain,"V1","activitycode")
+xtest$activitycode <- NULL
+xtrain$activitycode <- NULL
 setnames(xtest, "subject_test$V1", "subject")
-names(xtest)
-setnames(xtrain,"train_activities$V2","activity")
 setnames(xtrain, "subject_train$V1", "subject")
-names(xtrain)
+setnames(xtest, "V2", "activity")
+setnames(xtrain, "V2", "activity")
 
 # 8. Combine (or stack) test and training data sets
 xtotal <- rbind(xtest, xtrain)
@@ -76,12 +80,12 @@ names(xtotal) <- gsub("Mag", "_magnitude", names(xtotal))
 names(xtotal) <- gsub("fbody", "fft_body", names(xtotal))
 names(xtotal) <- gsub("tbody", "timedomain_body", names(xtotal))
 names(xtotal) <- gsub("tgravity", "timedomain_gravity", names(xtotal))
-names(xtotal)
+xtotal
 
 
 # 10. Create a tidy summary table with the average of each variable 
 # for each activity and each subject.
 xsummary <- xtotal %>%
-  group_by(subject, activity) %>%
+  group_by(activity, subject) %>%
   summarise_each(funs(mean(., na.rm=TRUE)))
 xsummary
