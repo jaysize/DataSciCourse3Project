@@ -89,3 +89,7 @@ xsummary <- xtotal %>%
   group_by(activity, subject) %>%
   summarise_each(funs(mean(., na.rm=TRUE)))
 xsummary
+
+# optional for making an output file of the summary data set
+# write.table(xsummary, file = "ProjectSummary.txt", row.name=FALSE)
+
