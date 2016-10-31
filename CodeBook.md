@@ -41,10 +41,10 @@ It executes the following process (the numbers match the comments preceeding eac
 2. Read the features, activity_labels, subject_test, subject_train, y_test, y_train, x_test, and X_train text files into data tables.
 3. Assign "features" factor to column headings of xtest and xtrain.
 4. Select only mean and standard deviation columns for each variable.
-5. Merge y_test and y_train with the activity labels
-6. Add the merged table of activities and subjects to our test and train sets
-7. Rename activity and subject columns
-8. Combine (or stack) test and training data sets that now have labels on the columns and rows
+5. Add the activity codes (from y test and train) and subjects to our X test and train sets
+6. Merge the activity labels to x_test and x_train on the activity codes
+7. Drop the old activity codes and rename the activity and subject columns
+8. Combine (or stack) test and training data sets
 9. Rename columns to more descriptive names
 10. Create a tidy summary table with the average of each variable for each activity and each subject.
 
